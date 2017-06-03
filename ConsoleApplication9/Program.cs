@@ -19,7 +19,7 @@ namespace ConsoleApplication9
             z1.Attach();
 
             Display z2 = new Display("Moj ekran", 50);
-            z1.addNewPreview(z1.Name + "ek");
+            z1.addNewPreview(z1.Name + "eg");
             z1.BlindDecoding();
             z1.Attach();
 
