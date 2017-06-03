@@ -266,7 +266,7 @@ namespace Receivers
                 makeLogs("Command: " + input);
                 // skladnia otrzymanego rozkazu to NUMER ROZKAZU.argumenty.NazwaMoja.idWysylajacego
                 String[] parametersC = input.Split('.');
-                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1])+parameters[3]);
+                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) + parameters[3]);
             }
         }
         protected bool AddMessageFollow(int orderNumer, String argv, String name)
@@ -288,7 +288,7 @@ namespace Receivers
             makeLogs("New message added: " + order);
             return true;
         }
-        private void AddMessageResults(String receiverOrder, String answer)
+        protected void AddMessageResults(String receiverOrder, String answer)
         {
             // SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
             String[] parameters = receiverOrder.Split('.');
