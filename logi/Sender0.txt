@@ -1,23 +1,14 @@
 Sender - id:0
-17-06-04 12:58:18:9549 Transmission started on 142,5-157,5MHz
-17-06-04 12:58:18:9709 Change state form DISCONNECTED to CONNECTED
-17-06-04 12:58:19:0129 New Reciever 1 TempRegulator
-17-06-04 12:58:19:0129 Reconfiguration Prepered for all
-17-06-04 12:58:19:0639 Received command: 1##TempMeter
-17-06-04 12:58:19:0649 Prepared ERROR message for: 1
-17-06-04 12:58:19:0829 New Reciever 2 TempMeter
-17-06-04 12:58:19:0839 Reconfiguration Prepered for all
-17-06-04 12:58:19:2429 Received command: 2#ERROR#Radiator
-17-06-04 12:58:19:2429 Prepared ERROR message for: 1
-17-06-04 12:58:19:3530 Received command: 1##TempMeter
-17-06-04 12:58:19:3530 Message prepared for: 2
-17-06-04 12:58:19:3930 Received results for previously command
-17-06-04 12:58:19:3930 result message prapared to send
-17-06-04 12:58:19:4660 Received command: 2#17,8#Radiator
-17-06-04 12:58:19:4660 Prepared ERROR message for: 1
-17-06-04 12:58:19:5760 Received command: 1##TempMeter
-17-06-04 12:58:19:5760 Message prepared for: 2
-17-06-04 12:58:19:5830 Turned down
-17-06-04 12:58:19:6160 Received results for previously command
-17-06-04 12:58:19:6160 result message prapared to send
+17-06-04 04:11:29:3569 Transmission started on 142,5-157,5MHz
+17-06-04 04:11:29:3969 Change state form DISCONNECTED to CONNECTED
+17-06-04 04:11:29:4439 New Reciever 1 TempRegulator
+17-06-04 04:11:29:4439 Reconfiguration Prepered for all
+17-06-04 04:11:29:5379 Reciver didn't answered. Disconnecting from station
+17-06-04 04:11:29:5389 Reconfiguration Prepered for all
+17-06-04 04:11:29:5579 New Reciever 3 Radiator
+17-06-04 04:11:29:5579 Reconfiguration Prepered for all
+17-06-04 04:11:29:6239 Reciver didn't answered. Disconnecting from station
+17-06-04 04:11:29:6239 Reconfiguration Prepered for all
+17-06-04 04:11:31:0930 Change state form CONNECTED to DISCONNECTED
+17-06-04 04:11:31:0930 Turned down
 

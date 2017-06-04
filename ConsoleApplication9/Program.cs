@@ -20,9 +20,13 @@ namespace ConsoleApplication9
 
             TempMeter u2 = new TempMeter();
             u2.BlindDecoding();
-            u2.Attach();
+            //u2.Attach();
 
-            Thread.Sleep(500);
+            Radiator u3 = new Radiator();
+            u3.BlindDecoding();
+            u3.Attach();
+
+            Thread.Sleep(1500);
             Device.DeviceContainer.RemoveAll();
         }
     }

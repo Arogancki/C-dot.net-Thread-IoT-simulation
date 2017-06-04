@@ -243,6 +243,7 @@ namespace Equipments
             {
                 makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
                 iSmyTempMeterOk = true;
+                return;
             }
             if (name == myTempMeter && answer == GlobalVarEquipments.Done)
                 iSmyTempMeterOk = true; // if get answer that temp is now ok
@@ -318,6 +319,7 @@ namespace Equipments
             {
                 makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
                 isRadiatorWorking = false;
+                return;
             }
             if (name==myTempMeter)
                 AddMessageFollow(2, answer, myRadiator);

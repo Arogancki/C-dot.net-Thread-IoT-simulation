@@ -78,6 +78,7 @@ namespace Devices
             makeLogs("Turned down");
             try
             {
+                listen.Interrupt();
                 listen.Join();
             }
             catch (Exception) { }
@@ -108,8 +109,8 @@ namespace Devices
         private String getLogs()
         {
             String output = "";
-            foreach (var line in logs)
-                output += line + "\n";
+            for (int i=0;i<logs.Count;i++)
+                output += logs[i] + "\n";
             return output;
         }
         private string getName()

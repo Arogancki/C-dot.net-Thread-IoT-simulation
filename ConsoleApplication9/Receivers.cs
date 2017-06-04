@@ -118,6 +118,7 @@ namespace Receivers
             {
                 try
                 {
+                    task.Interrupt();
                     task.Join();
                 }
                 catch (Exception) { }
