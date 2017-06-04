@@ -1,8 +1,35 @@
 TempRegulator - id:1
-17-06-04 04:11:29:4429 Connected on 135-150MHz quality: 0,5
-17-06-04 04:11:29:4429 Change state form DISCONNECTED to CONNECTED
-17-06-04 04:11:29:4429 New message added: 1##TempMeter
-17-06-04 04:11:29:4439 Attach successful: SingleMessage time: 20ms, gap time: 30ms
-17-06-04 04:11:31:1030 Change state form CONNECTED to DISCONNECTED
-17-06-04 04:11:31:1030 Turned down
+17-06-04 05:17:43:8022 New message added: 1##TempMeter
+17-06-04 05:17:43:8022 Connected on 135-150MHz quality: 0,5
+17-06-04 05:17:43:8032 Change state form DISCONNECTED to CONNECTED
+17-06-04 05:17:43:8312 Attach successful: SingleMessage time: 20ms, gap time: 30ms
+17-06-04 05:17:43:9392 Reconfiguration complete: Single:20 to 20 Gap:30 to 70
+17-06-04 05:17:44:0442 Reconfiguration complete: Single:20 to 20 Gap:70 to 110
+17-06-04 05:17:44:1942 Received results: 1##TempMeter ans: ERROR
+17-06-04 05:17:44:1952 Cooperating devices not connected
+17-06-04 05:17:44:3022 New message added: 1##TempMeter
+17-06-04 05:17:44:4942 Received results: 1##TempMeter ans: 17,7
+17-06-04 05:17:44:4942 New message added: 2#17,7#Radiator
+17-06-04 05:17:44:8022 New message added: 1##TempMeter
+17-06-04 05:17:44:9453 Received results: 1##TempMeter ans: 17,9
+17-06-04 05:17:44:9453 New message added: 2#17,9#Radiator
+17-06-04 05:17:45:3023 New message added: 1##TempMeter
+17-06-04 05:17:45:5483 Received results: 1##TempMeter ans: 18,8
+17-06-04 05:17:45:5483 New message added: 2#18,8#Radiator
+17-06-04 05:17:45:8023 New message added: 1##TempMeter
+17-06-04 05:17:46:7514 Received results: 1##TempMeter ans: 20,19999
+17-06-04 05:17:46:7514 New message added: 2#20,19999#Radiator
+17-06-04 05:17:46:8024 New message added: 1##TempMeter
+17-06-04 05:17:46:9014 Received results: 2#17,7#Radiator ans: DONE
+17-06-04 05:17:47:0514 Received results: 2#17,9#Radiator ans: DONE
+17-06-04 05:17:47:2024 Received results: 1##TempMeter ans: 19,99999
+17-06-04 05:17:47:2024 New message added: 2#19,99999#Radiator
+17-06-04 05:17:47:3024 New message added: 1##TempMeter
+17-06-04 05:17:47:3514 Received results: 2#18,8#Radiator ans: DONE
+17-06-04 05:17:47:5014 Received results: 1##TempMeter ans: 20,19999
+17-06-04 05:17:47:8024 New message added: 1##TempMeter
+17-06-04 05:17:47:8024 Received results: 2#20,19999#Radiator ans: DONE
+17-06-04 05:17:47:9524 Received results: 1##TempMeter ans: 19,99999
+17-06-04 05:17:48:0404 Change state form CONNECTED to DISCONNECTED
+17-06-04 05:17:48:0404 Turned down
 

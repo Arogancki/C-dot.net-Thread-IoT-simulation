@@ -58,73 +58,87 @@ namespace Senders
         }
         private void Listen()
         {
-            Data newReceiver = new Data();
-            temp=new List<int>(receivers);
-            newReceiver.state = State.CONNECTED;
-            newReceiver.id = id;
-            newReceiver.direction=Direction.DL;
-            long milliseconds;
-            int timeSpaceToSend;
-            while (listenFlag)
+            try
             {
-
-                foreach (var receiver in temp)
-                {
-                    milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message to " + receiver);
-                    SendMessage(receiver,milliseconds.ToString()); 
-                    
-                    try { 
-                        Thread.Sleep(timeSingle // time to recive message
-                        - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)-milliseconds)); // difference from now and start time
-                        }
-                        catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-
-                    milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message from " + receiver);
-                    GetMessage(receiver,timeSingle);
-                    
-                    try { 
-                        Thread.Sleep(timeSingle // time to recive message
-                        - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)-milliseconds));
-                        }
-                        catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-                }
-
-                milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-
-                //WATEK ATTACH
-                timeSpaceToSend = timeSpace + (receivers.Count * 2 * timeSingle)
-                    /*- (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds)*/;
-                newReceiver.description = timeSingle + "#" //single time for 1 way transmission
-                    + timeSpaceToSend // time between all transmission
-                     + "#" + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); //actual time
-
-                channel.ReceiveAttach(ref newReceiver); // if Data is returned new receiver has attached
-                if (newReceiver.id != id) // new reciver
-                {
-                    if (!receivers.Contains(newReceiver.id))
-                    {
-                        makeLogs("New Reciever " + newReceiver.id + " " + newReceiver.description);
-                        ReconfigureALL(timeSingle, timeSpace + (receivers.Count*2*timeSingle));
-                        receivers.Add(newReceiver.id);
-                        receiversNames.Add(newReceiver.id, newReceiver.description);
-                        messages.Add(newReceiver.id, new LinkedList<Data>());
-                    }
-                    newReceiver.state = State.DISCONNECTED;
-                    newReceiver.id = id;
-                    newReceiver.direction = Direction.DL;
-                }
-                //wait timeSpace
-
+                Data newReceiver = new Data();
                 temp = new List<int>(receivers);
-                try
+                newReceiver.state = State.CONNECTED;
+                newReceiver.id = id;
+                newReceiver.direction = Direction.DL;
+                long milliseconds;
+                int timeSpaceToSend;
+                while (listenFlag)
                 {
-                    Thread.Sleep(timeSpace - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds));
+
+                    foreach (var receiver in temp)
+                    {
+                        milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message to " + receiver);
+                        SendMessage(receiver, milliseconds.ToString());
+
+                        try
+                        {
+                            Thread.Sleep(timeSingle // time to recive message
+                                         - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                            // difference from now and start time
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                        } // no need to handle -time exception, just do NOT wait
+
+                        milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message from " + receiver);
+                        GetMessage(receiver, timeSingle);
+
+                        try
+                        {
+                            Thread.Sleep(timeSingle // time to recive message
+                                         - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                        } // no need to handle -time exception, just do NOT wait
+                    }
+
+                    milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
+                    //WATEK ATTACH
+                    timeSpaceToSend = timeSpace + (receivers.Count*2*timeSingle)
+                        /*- (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds)*/;
+                    newReceiver.description = timeSingle + "#" //single time for 1 way transmission
+                                              + timeSpaceToSend // time between all transmission
+                                              + "#" + (DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); //actual time
+
+                    channel.ReceiveAttach(ref newReceiver); // if Data is returned new receiver has attached
+                    if (newReceiver.id != id) // new reciver
+                    {
+                        if (!receivers.Contains(newReceiver.id))
+                        {
+                            makeLogs("New Reciever " + newReceiver.id + " " + newReceiver.description);
+                            ReconfigureALL(timeSingle, timeSpace + (receivers.Count*2*timeSingle));
+                            receivers.Add(newReceiver.id);
+                            receiversNames.Add(newReceiver.id, newReceiver.description);
+                            messages.Add(newReceiver.id, new LinkedList<Data>());
+                        }
+                        newReceiver.state = State.DISCONNECTED;
+                        newReceiver.id = id;
+                        newReceiver.direction = Direction.DL;
+                    }
+                    //wait timeSpace
+
+                    temp = new List<int>(receivers);
+                    try
+                    {
+                        Thread.Sleep(timeSpace -
+                                     (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                    } // no need to handle -time exception, just do NOT wait
                 }
-                catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
             }
+            catch (Exception e){}
         }
         private void DeleteReceiver(int receiver)
         {

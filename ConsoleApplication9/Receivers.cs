@@ -143,34 +143,49 @@ namespace Receivers
         protected abstract void HandleResultSpecial(int orderNumer, String argv, String name, String answer);
         private void Listen()
         {
-            Data DL = new Data();
-            Data UL = new Data();
-            while (listenFlag)
+            try
             {
-                try {
-                    Thread.Sleep(timeWait - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                Data DL = new Data();
+                Data UL = new Data();
+                while (listenFlag)
+                {
+                    try
+                    {
+                        Thread.Sleep(timeWait - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
                     }
-                    catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-                milliseconds =(DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                    } // no need to handle -time exception, just do NOT wait
+                    milliseconds = (DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
 
-                if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message");
-                GetMessage(timeSingle);
+                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message");
+                    GetMessage(timeSingle);
 
-                try { 
-                    Thread.Sleep(timeSingle - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds));
+                    try
+                    {
+                        Thread.Sleep(timeSingle -
+                                     (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
                     }
-                    catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-                milliseconds = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); // set next synchronization point
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                    } // no need to handle -time exception, just do NOT wait
+                    milliseconds = (DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
 
-                if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message");
-                SendMessage();
+                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message");
+                    SendMessage();
 
-                try {
-                    Thread.Sleep(timeSingle - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds));
+                    try
+                    {
+                        Thread.Sleep(timeSingle -
+                                     (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
                     }
-                    catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-                milliseconds = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); // set next synchronization point
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                    } // no need to handle -time exception, just do NOT wait
+                    milliseconds = (DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
+                }
             }
+            catch (Exception e){}
         }
         private void SendMessage()
         {
@@ -228,41 +243,50 @@ namespace Receivers
         }
         private void HandleResults(String input)
         {
-            // recived results is rozkaz.argv.nameslave.odp.master.synchtime
-            String[] parameters = input.Split('#');
-            String command = "";
-            int i = 0;
-            for (; i < parameters.Length - 3; i++)
+            try
             {
-                if (i != 0) command += "#";
-                command += parameters[i];
+                // recived results is rozkaz.argv.nameslave.odp.master.synchtime
+                String[] parameters = input.Split('#');
+                String command = "";
+                int i = 0;
+                for (; i < parameters.Length - 3; i++)
+                {
+                    if (i != 0) command += "#";
+                    command += parameters[i];
+                }
+                if (!waitingForRespond.Remove(command))
+                {
+                    makeLogs("Received missmatched results: " + input);
+                    return;
+                }
+                makeLogs("Received results: " + command + " ans: " + parameters[3]);
+                HandleResultSpecial(Int32.Parse(parameters[0]), parameters[1], parameters[2], parameters[3]);
             }
-            if (!waitingForRespond.Remove(command))
-            {
-                makeLogs("Received missmatched results: " + input);
-                return;
-            }
-            if (GlobalVarDevice.DetailedLogs) makeLogs("Received results: " + command+" ans: "+ parameters[3]);
-            HandleResultSpecial(Int32.Parse(parameters[0]), parameters[1], parameters[2], parameters[3]);
+            catch (Exception e) { }
         }
         private void HandleFollow(String input)
         {
-            // otrzymany rozkaz to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
-            // lub 0.NewTimeSingle.NewTimeWait
-            String[] parameters=input.Split('#');
-            if (parameters[0] == "0")
+            try
             {
-                makeLogs("Reconfiguration complete: Single:" + timeSingle + " to " + parameters[1] + " Gap:" +
+                // otrzymany rozkaz to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
+                // lub 0.NewTimeSingle.NewTimeWait
+                String[] parameters = input.Split('#');
+                if (parameters[0] == "0")
+                {
+                    makeLogs("Reconfiguration complete: Single:" + timeSingle + " to " + parameters[1] + " Gap:" +
                              timeWait + " to " + parameters[2]);
-                timeSingle = Int32.Parse(parameters[1]);
-                timeWait = Int32.Parse(parameters[2]);
+                    timeSingle = Int32.Parse(parameters[1]);
+                    timeWait = Int32.Parse(parameters[2]);
+                }
+                else
+                {
+                    String[] parametersC = input.Split('#');
+                    makeLogs("Command: " + parametersC[0] +" arg: " + parametersC[1]);
+                    AddMessageResults(input,
+                        HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) + "#" + parameters[3]);
+                }
             }
-            else
-            { 
-                String[] parametersC = input.Split('#');
-                makeLogs("Command: " + parametersC[0]+ parametersC[1]);
-                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) +"#"+ parameters[3]);
-            }
+            catch (Exception e) { }
         }
         protected bool AddMessageFollow(int orderNumer, String argv, String name)
         {

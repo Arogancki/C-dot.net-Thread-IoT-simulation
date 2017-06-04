@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Receivers;
@@ -113,11 +114,15 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            try
             {
-                RefreshWatchListStatus();
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    RefreshWatchListStatus();
+                    Thread.Sleep(refreshTime);
+                }
             }
+            catch (Exception) { }
         }
     }
     class TempMeter : Receiver
@@ -146,10 +151,10 @@ namespace Equipments
                 return temp.ToString();
             else
             {
-                while (temp > float.Parse(argv) && listenFlag)
+                while (temp < float.Parse(argv) && listenFlag)
                 {
-                    temp += 0.4f;
-                    Thread.Sleep(refreshTime);
+                    temp += 0.1f;
+                    Thread.Sleep(refreshTime/4);
                 }
                 return GlobalVarEquipments.Done;
             }
@@ -161,12 +166,16 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            try
             {
-                if (temp>0.0f)
-                    temp -= 0.1f;
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    if (temp > 0.0f)
+                        temp -= 0.1f;
+                    Thread.Sleep(refreshTime);
+                }
             }
+            catch(Exception){}
         }
     }
     class Radiator : Receiver
@@ -231,7 +240,7 @@ namespace Equipments
                         AddMessageFollow(2, tempTarget.ToString(), myTempMeter); // send message to warm
                     }
                     while (!iSmyTempMeterOk && listenFlag) // check if temperature is stil NOK
-                        Thread.Sleep(refreshTime);
+                        Thread.Sleep(100);
                 }
                 catch (Exception){}
                 return GlobalVarEquipments.Done;
@@ -329,11 +338,15 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            try
             {
-                AddMessageFollow(1, "", myTempMeter);
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    AddMessageFollow(1, "", myTempMeter);
+                    Thread.Sleep(refreshTime);
+                }
             }
+            catch (Exception e) { }
         }
     }
 }

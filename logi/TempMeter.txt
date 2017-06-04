@@ -1,6 +1,26 @@
 TempMeter - id:2
-17-06-04 04:11:29:4749 Connected on 135-150MHz quality: 0,5
-17-06-04 04:11:29:4749 Change state form DISCONNECTED to CONNECTED
-17-06-04 04:11:31:1400 Change state form CONNECTED to DISCONNECTED
-17-06-04 04:11:31:1400 Turned down
+17-06-04 05:17:43:8402 Connected on 135-150MHz quality: 0,5
+17-06-04 05:17:43:8402 Change state form DISCONNECTED to CONNECTED
+17-06-04 05:17:43:9052 Attach successful: SingleMessage time: 20ms, gap time: 70ms
+17-06-04 05:17:44:0842 Reconfiguration complete: Single:20 to 20 Gap:70 to 110
+17-06-04 05:17:44:3842 Command: 1 arg: 
+17-06-04 05:17:44:3842 Respond sent: 17,7#1 for 1##TempMeter
+17-06-04 05:17:44:6842 Command: 2 arg: 20
+17-06-04 05:17:44:8342 Command: 1 arg: 
+17-06-04 05:17:44:8342 Respond sent: 17,9#1 for 1##TempMeter
+17-06-04 05:17:45:4383 Command: 1 arg: 
+17-06-04 05:17:45:4383 Respond sent: 18,8#1 for 1##TempMeter
+17-06-04 05:17:46:4843 Respond sent: DONE#3 for 2#20#TempMeter
+17-06-04 05:17:46:4843 Command: 1 arg: 
+17-06-04 05:17:46:4843 Respond sent: 20,19999#1 for 1##TempMeter
+17-06-04 05:17:46:9414 Command: 1 arg: 
+17-06-04 05:17:46:9414 Respond sent: 19,99999#1 for 1##TempMeter
+17-06-04 05:17:47:2414 Command: 2 arg: 20
+17-06-04 05:17:47:3914 Command: 1 arg: 
+17-06-04 05:17:47:3914 Respond sent: 20,19999#1 for 1##TempMeter
+17-06-04 05:17:47:4414 Respond sent: DONE#3 for 2#20#TempMeter
+17-06-04 05:17:47:8424 Command: 1 arg: 
+17-06-04 05:17:47:8424 Respond sent: 19,99999#1 for 1##TempMeter
+17-06-04 05:17:48:0754 Change state form CONNECTED to DISCONNECTED
+17-06-04 05:17:48:0754 Turned down
 

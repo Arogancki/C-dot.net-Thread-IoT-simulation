@@ -1,9 +1,23 @@
 Radiator - id:3
-17-06-04 04:11:29:4749 Connected on 135-150MHz quality: 0,5
-17-06-04 04:11:29:4749 Change state form DISCONNECTED to CONNECTED
-17-06-04 04:11:29:5919 Attach successful: SingleMessage time: 20ms, gap time: 30ms
-17-06-04 04:11:29:6679 Station didn't answer. Disconnecting from station
-17-06-04 04:11:29:6689 Change state form CONNECTED to DISCONNECTED
-17-06-04 04:11:29:6689 Disconnecting cause: Station didn't answer.
-17-06-04 04:11:31:1730 Turned down
+17-06-04 05:17:43:9072 Connected on 135-150MHz quality: 0,5
+17-06-04 05:17:43:9072 Change state form DISCONNECTED to CONNECTED
+17-06-04 05:17:44:0142 Attach successful: SingleMessage time: 20ms, gap time: 110ms
+17-06-04 05:17:44:5742 Command: 2 arg: 17,7
+17-06-04 05:17:44:5742 New message added: 2#20#TempMeter
+17-06-04 05:17:45:0243 Command: 2 arg: 17,9
+17-06-04 05:17:45:6283 Command: 2 arg: 18,8
+17-06-04 05:17:46:5313 Received results: 2#20#TempMeter ans: DONE
+17-06-04 05:17:46:5743 Respond sent: DONE#1 for 2#17,7#Radiator
+17-06-04 05:17:46:6244 Respond sent: DONE#1 for 2#17,9#Radiator
+17-06-04 05:17:46:6304 Respond sent: DONE#1 for 2#18,8#Radiator
+17-06-04 05:17:46:8314 Command: 2 arg: 20,19999
+17-06-04 05:17:46:8314 New message added: 2#20#TempMeter
+17-06-04 05:17:47:2814 Command: 2 arg: 19,99999
+17-06-04 05:17:47:5824 Received results: 2#20#TempMeter ans: DONE
+17-06-04 05:17:47:6314 Respond sent: DONE#1 for 2#20,19999#Radiator
+17-06-04 05:17:47:6814 Respond sent: DONE#1 for 2#19,99999#Radiator
+17-06-04 05:17:48:0754 Station didn't answer. Disconnecting from station
+17-06-04 05:17:48:0754 Change state form CONNECTED to DISCONNECTED
+17-06-04 05:17:48:0754 Disconnecting cause: Station didn't answer.
+17-06-04 05:17:48:0864 Turned down
 
