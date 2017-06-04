@@ -18,7 +18,6 @@ namespace ConsoleApplication9
             u1.BlindDecoding();
             u1.Attach();
             
-
             Thread.Sleep(500);
             Device.DeviceContainer.RemoveAll();
         }

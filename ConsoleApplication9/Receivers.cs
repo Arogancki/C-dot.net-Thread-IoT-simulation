@@ -152,7 +152,7 @@ namespace Receivers
                     catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
                 milliseconds =(DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
 
-                //TODO makeLogs("traing to get message");
+                if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message");
                 GetMessage(timeSingle);
 
                 try { 
@@ -161,7 +161,7 @@ namespace Receivers
                     catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
                 milliseconds = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); // set next synchronization point
 
-                //TODO makeLogs("traing to send message");
+                if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message");
                 SendMessage();
 
                 try {
@@ -173,16 +173,16 @@ namespace Receivers
         }
         private void SendMessage()
         {
-            if (messages.Count > 0) // if there is message for receiver
+            if (messages.Count > 0) // if there is message to send
             {
                 station.channel.setChannel(messages.First());
-                makeLogs("Message sent to " + sender);
                 messages.RemoveFirst();
+                if (GlobalVarDevice.DetailedLogs) makeLogs("Message sent to " + sender);
             }
             else
             {
                 station.channel.setChannel(id, State.CONNECTED, "", Direction.UL); // send defalut message
-                makeLogs("Message sent to " + sender);
+                //makeLogs("Message sent to " + sender);
             }
         }
         private void GetMessage(int timeOut)
@@ -209,17 +209,15 @@ namespace Receivers
                 switch (message.state) 
                 {
                     case State.CONNECTED:
-                        //TODO makeLogs("Received: Nothing to do");
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("Received: Nothing to do");
                         break;
                     case State.DISCONNECTED:
                         Disconnect("Station shut down. Disconnecting");
                         break;
                     case State.FOLLOW:
-                        makeLogs("Received command");
                         Task.Run(() => HandleFollow(message.description));
                         break;
                     case State.RESULTS:
-                        makeLogs("Received results");
                         Task.Run(() => HandleResults(message.description));
                         break;
                 }
@@ -241,11 +239,6 @@ namespace Receivers
             if (!waitingForRespond.Remove(command))
             {
                 makeLogs("Received missmatched results: " + input);
-                return;
-            }
-            if (parameters[3] == "ERROR")
-            {
-                makeLogs("Received results ERROR: " + command); // incorrect message or user is not connected
                 return;
             }
             makeLogs("Received results: " + command+" ans: "+ parameters[3]);

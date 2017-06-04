@@ -72,7 +72,7 @@ namespace Senders
                 {
                     milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-                    //TODO makeLogs("traing to send message to " + receiver);
+                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message to " + receiver);
                     SendMessage(receiver,milliseconds.ToString()); 
                     
                     try { 
@@ -82,7 +82,7 @@ namespace Senders
                         catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
 
                     milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    //TODO makeLogs("traing to get message from " + receiver);
+                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message from " + receiver);
                     GetMessage(receiver,timeSingle);
                     
                     try { 
@@ -165,7 +165,7 @@ namespace Senders
                 switch (message.state)
                 {
                     case State.CONNECTED:
-                        //TODO makeLogs("Received: Nothing to do");
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("Received: Nothing to do");
                         break;
                     case State.DISCONNECTED:
                         makeLogs("Receiver shuts down. Cause: "+message.description);
@@ -198,12 +198,13 @@ namespace Senders
             {
                 channel.setChannel(temp.First(), "." + time);
                 temp.RemoveFirst();
+                if (GlobalVarDevice.DetailedLogs) makeLogs("Message sent to " + receiver);
             }
             else
             {
                 channel.setChannel(receiver, State.CONNECTED, "." + time, Direction.DL); // send defalut message
+                //makeLogs("Message sent to " + receiver);
             }
-            makeLogs("Message sent to " + receiver);
         }
         private void HandleResults(String input)
         {

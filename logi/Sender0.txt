@@ -1,19 +1,18 @@
 Sender - id:0
-45:7623 Transmission started on 142,5-157,5MHz
-45:7813 Change state form DISCONNECTED to CONNECTED
-45:8273 New Reciever 1 TempRegulator
-45:8573 Message sent to 1
-45:8793 Received command: 1..TempMeter
-45:8803 Prepared ERROR message for: 1
-45:9273 Message sent to 1
-45:9973 Message sent to 1
-46:0673 Message sent to 1
-46:0873 Received command: 1..TempMeter
-46:0873 Prepared ERROR message for: 1
-46:1373 Message sent to 1
-46:2073 Message sent to 1
-46:2273 Received command: 1..TempMeter
-46:2273 Prepared ERROR message for: 1
-46:2773 Message sent to 1
-46:3283 Turned down
+17-06-04 12:35:46:9986 Transmission started on 142,5-157,5MHz
+17-06-04 12:35:47:0176 Change state form DISCONNECTED to CONNECTED
+17-06-04 12:35:47:0526 New Reciever 1 TempRegulator
+17-06-04 12:35:47:1056 Received command: 1..TempMeter
+17-06-04 12:35:47:1066 Prepared ERROR message for: 1
+17-06-04 12:35:47:1736 Received command: 2.ERROR.Radiator
+17-06-04 12:35:47:1736 Prepared ERROR message for: 1
+17-06-04 12:35:47:2436 Received command: 1..TempMeter
+17-06-04 12:35:47:2436 Prepared ERROR message for: 1
+17-06-04 12:35:47:3136 Received command: 2.ERROR.Radiator
+17-06-04 12:35:47:3136 Prepared ERROR message for: 1
+17-06-04 12:35:47:3866 Received command: 1..TempMeter
+17-06-04 12:35:47:3866 Prepared ERROR message for: 1
+17-06-04 12:35:47:4596 Received command: 2.ERROR.Radiator
+17-06-04 12:35:47:4596 Prepared ERROR message for: 1
+17-06-04 12:35:47:5526 Turned down
 

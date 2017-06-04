@@ -7,6 +7,10 @@ namespace Devices
 {
     public abstract class Device
     {
+        internal static class GlobalVarDevice
+        {
+            internal static bool DetailedLogs = false;
+        }
         public static class DeviceContainer 
         {
             private static String logFile = Environment.CurrentDirectory + "\\..\\..\\..\\logi";
@@ -66,7 +70,6 @@ namespace Devices
             if (DeviceContainer.Contains(this))
                 DeviceContainer.Remove(this);
         }
-
         internal void hardTurnOff()
         {
             listenFlag = false;
@@ -77,7 +80,6 @@ namespace Devices
             }
             catch (Exception) { }
         }
-
         protected Thread listen;
         protected bool listenFlag;
         protected Device()
@@ -98,8 +100,8 @@ namespace Devices
         {
             if (logs.Count > maxLogsSize)
                 logs.RemoveAt(1);
-            //logs.Add(DateTime.Now.ToString("yy-MM-dd hh:mm:ss:ffff ")+log);
-            logs.Add(DateTime.Now.ToString("ss:ffff ") + log);
+            logs.Add(DateTime.Now.ToString("yy-MM-dd hh:mm:ss:ffff ")+log);
+            //logs.Add(DateTime.Now.ToString("ss:ffff ") + log);
         }
         private String getLogs()
         {

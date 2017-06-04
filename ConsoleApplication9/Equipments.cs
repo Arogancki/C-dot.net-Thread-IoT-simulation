@@ -7,7 +7,7 @@ using Receivers;
 
 namespace Equipments
 { 
-    public static class GlobalVar
+    internal static class GlobalVarEquipments
     {
         public static String Done = "DONE";
     }
@@ -96,6 +96,10 @@ namespace Equipments
         }
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
         {
+            if (answer == "ERROR")
+            {
+                answer = "NA";
+            }
             foreach (String[] device in watchList)
             {
                 if (device[0] == name)
@@ -147,7 +151,7 @@ namespace Equipments
                     temp += 0.4f;
                     Thread.Sleep(refreshTime);
                 }
-                return GlobalVar.Done;
+                return GlobalVarEquipments.Done;
             }
         }
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
@@ -221,7 +225,7 @@ namespace Equipments
             {
                 try
                 {
-                    if (iSmyTempMeterOk == false)
+                    if (iSmyTempMeterOk != false)
                     {
                         iSmyTempMeterOk = false;
                         AddMessageFollow(2, tempTarget.ToString(), myTempMeter); // send message to warm
@@ -230,12 +234,17 @@ namespace Equipments
                         Thread.Sleep(refreshTime);
                 }
                 catch (Exception){}
-                return GlobalVar.Done;
+                return GlobalVarEquipments.Done;
             }
         }
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
         {
-            if (name == myTempMeter && answer == GlobalVar.Done)
+            if (answer == "ERROR")
+            {
+                makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
+                iSmyTempMeterOk = true;
+            }
+            if (name == myTempMeter && answer == GlobalVarEquipments.Done)
                 iSmyTempMeterOk = true; // if get answer that temp is now ok
         }
     }
@@ -300,14 +309,19 @@ namespace Equipments
                 {
                     Thread.Sleep(refreshTime/4);
                 }
-                return GlobalVar.Done;
+                return GlobalVarEquipments.Done;
             }
         }
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
         {
+            if (answer == "ERROR")
+            {
+                makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
+                isRadiatorWorking = false;
+            }
             if (name==myTempMeter)
                 AddMessageFollow(2, answer, myRadiator);
-            else if (name == myRadiator && answer == GlobalVar.Done)
+            else if (name == myRadiator && answer == GlobalVarEquipments.Done)
                 isRadiatorWorking = false;
         }
         // tasks running on timer

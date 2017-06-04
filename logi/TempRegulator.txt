@@ -1,28 +1,27 @@
 TempRegulator - id:1
-45:8173 Connected on 135-150MHz quality: 0,5
-45:8173 Change state form DISCONNECTED to CONNECTED
-45:8173 New message added: 1..TempMeter
-45:8283 Attach successful: SingleMessage time: 20ms, gap time: 30ms
-45:8793 Message sent to 0
-45:9173 Still havent got respond for: 1..TempMeter
-45:9273 Received results
-45:9303 Received results ERROR: 1..TempMeter
-45:9473 Message sent to 0
-46:0173 Message sent to 0
-46:0173 New message added: 1..TempMeter
-46:0873 Message sent to 0
-46:1173 Still havent got respond for: 1..TempMeter
-46:1373 Received results
-46:1373 Received results ERROR: 1..TempMeter
-46:1573 Message sent to 0
-46:2173 New message added: 1..TempMeter
-46:2273 Message sent to 0
-46:2773 Received results
-46:2773 Received results ERROR: 1..TempMeter
-46:2973 Message sent to 0
-46:3173 New message added: 1..TempMeter
-46:3493 Turned down
-46:4303 Station didn't answer. Disconnecting from station
-46:4303 Change state form CONNECTED to DISCONNECTED
-46:4303 Disconnecting cause: Station didn't answer.
+17-06-04 12:35:47:0266 Connected on 135-150MHz quality: 0,5
+17-06-04 12:35:47:0266 Change state form DISCONNECTED to CONNECTED
+17-06-04 12:35:47:0286 New message added: 1..TempMeter
+17-06-04 12:35:47:0526 Attach successful: SingleMessage time: 20ms, gap time: 30ms
+17-06-04 12:35:47:1286 Still havent got respond for: 1..TempMeter
+17-06-04 12:35:47:1556 Received results: 1..TempMeter ans: ERROR
+17-06-04 12:35:47:1566 Cooperating devices not connected
+17-06-04 12:35:47:1566 New message added: 2.ERROR.Radiator
+17-06-04 12:35:47:2236 Received results: 2.ERROR.Radiator ans: ERROR
+17-06-04 12:35:47:2236 Cooperating devices not connected
+17-06-04 12:35:47:2286 New message added: 1..TempMeter
+17-06-04 12:35:47:2936 Received results: 1..TempMeter ans: ERROR
+17-06-04 12:35:47:2936 Cooperating devices not connected
+17-06-04 12:35:47:2936 New message added: 2.ERROR.Radiator
+17-06-04 12:35:47:3286 New message added: 1..TempMeter
+17-06-04 12:35:47:3706 Received results: 2.ERROR.Radiator ans: ERROR
+17-06-04 12:35:47:3706 Cooperating devices not connected
+17-06-04 12:35:47:4296 Still havent got respond for: 1..TempMeter
+17-06-04 12:35:47:4446 Received results: 1..TempMeter ans: ERROR
+17-06-04 12:35:47:4446 Cooperating devices not connected
+17-06-04 12:35:47:4446 New message added: 2.ERROR.Radiator
+17-06-04 12:35:47:5096 Received results: 2.ERROR.Radiator ans: ERROR
+17-06-04 12:35:47:5096 Cooperating devices not connected
+17-06-04 12:35:47:5316 New message added: 1..TempMeter
+17-06-04 12:35:47:5816 Turned down
 
