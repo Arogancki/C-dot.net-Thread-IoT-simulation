@@ -7,6 +7,30 @@ namespace Devices
 {
     public abstract class Device
     {
+        public static class DeviceContainer 
+        {
+            private static String logFile = Environment.CurrentDirectory + "\\..\\..\\..\\logi";
+            private static List<Device> Container=new List<Device>();
+            public static void AddNew(Device device)
+            {
+                Container.Add(device);
+            }
+            internal static void Remove(Device device)
+            {
+                device.hardTurnOff();
+                Container.Remove(device);
+                device.SaveLogsToFile(logFile+"\\"+device.Name);
+            }
+            internal static bool Contains(Device device)
+            {
+                return Container.Contains(device);
+            }
+            public static void RemoveAll()
+            {
+                while (Container.Count>0)
+                    DeviceContainer.Remove(Container[0]);
+            }
+        }
         public String Name;
         public State state
         {
@@ -39,6 +63,12 @@ namespace Devices
         }
         public virtual void TurnOff()
         {
+            if (DeviceContainer.Contains(this))
+                DeviceContainer.Remove(this);
+        }
+
+        internal void hardTurnOff()
+        {
             listenFlag = false;
             makeLogs("Turned down");
             try
@@ -47,6 +77,7 @@ namespace Devices
             }
             catch (Exception) { }
         }
+
         protected Thread listen;
         protected bool listenFlag;
         protected Device()
@@ -57,6 +88,7 @@ namespace Devices
             state = State.DISCONNECTED;
             setHeader();
             Name = "Device";
+            DeviceContainer.AddNew(this);
         }
         private void setHeader()
         {

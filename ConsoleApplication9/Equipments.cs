@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Receivers;
 
 
@@ -19,6 +19,7 @@ namespace Equipments
         private List<String[]> watchList;
         static private int defalutRefreshTime= 10000;
         static private String defalutName="Display";
+        private Semaphore watchListSemaphore;
         public int refreshTime;
         public Display(int _refreshTime) : this(defalutName, _refreshTime) {}
         public Display(String name) : this(name, defalutRefreshTime) {}
@@ -29,6 +30,7 @@ namespace Equipments
             refreshTime = _refreshTime;
             watchList = new List<String[]>();
             tasks=new List<Thread>();
+            watchListSemaphore= new Semaphore(1, 1);
             tasks.Add(new Thread(TimeTask1));
             tasks[0].Start();
         }
@@ -41,31 +43,48 @@ namespace Equipments
             }
             return output;
         }
-        public void addNewPreview(String name)
+        public void AddNewPreview(String name)
         {
             if (AddMessageFollow(1, "", name))
             {
                 String[] temp = {name, "NA"};
+                watchListSemaphore.WaitOne();
                 watchList.Add(temp);
+                watchListSemaphore.Release();
                 makeLogs("Added to watch list: " + name);
             }
             else
                 makeLogs("Alreay waiting for respond: " + name);
         }
-        public void removePreview(String name)
+        public void RemovePreview(String name)
         {
             for (int i = 0; i < watchList.Count; i++)
                 if (watchList[i][0] == name)
                 {
                     makeLogs("removed from watch list: " + name);
+                    watchListSemaphore.WaitOne();
                     watchList.RemoveAt(i);
+                    watchListSemaphore.Release();
                 }
-        }   
+        }
+        public void Action()
+        {
+            Task.Run(() => RefreshWatchListStatus());
+        }
+        private void RefreshWatchListStatus()
+        {
+            watchListSemaphore.WaitOne();
+            foreach (var i in watchList)
+            {
+                AddMessageFollow(1, "", i[0]);
+            }
+            watchListSemaphore.Release();
+        }
         protected override String HandleFollowSpecial(int order, String argv)
         {
             if (order == 1)
             {
-                return Name+" watchs "+watchList.Count+" devices.";
+                return Name+" watches "+watchList.Count+" devices.";
             }
             //order other
             String output = "My devices:";
@@ -92,10 +111,7 @@ namespace Equipments
         {
             while (listenFlag)
             {
-                foreach (var i in watchList)
-                {
-                    AddMessageFollow(1, "", i[0]);
-                }
+                RefreshWatchListStatus();
                 Thread.Sleep(refreshTime);
             }
         }
@@ -136,7 +152,7 @@ namespace Equipments
         }
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
         {
-            makeLogs("I haven't asked for anything");
+            makeLogs("Recived strange results...");
         }
         // tasks running on timer
         private void TimeTask1()
@@ -170,29 +186,30 @@ namespace Equipments
             Name = name;
             refreshTime = _refreshTime;
         }
-
         public void setTempTarget(float temp)
         {
             tempTarget = temp;
+            makeLogs("Target temp set to "+tempTarget);
         }
-
         public void setTempTarget()
         {
-            tempTarget = defalutTempTarget;
+            setTempTarget(defalutTempTarget);
         }
-
         public void setTempMeter(String name)
         {
             myTempMeter = name;
+            makeLogs("TempMeter set to "+name);
         }
         public void setTempMeter()
         {
-            myTempMeter = defalutMyTempMeter;
+            setTempMeter(defalutMyTempMeter);
         }
-
+        public void Action()
+        {
+            Task.Run(() => HandleFollowSpecial(2, ""));
+        }
         protected override String HandleFollowSpecial(int order, String argv)
         {
-            //TODO send message to radiator to warm up
             if (order == 1)
             {
                 if (iSmyTempMeterOk)
@@ -202,10 +219,17 @@ namespace Equipments
             }
             else
             {
-                iSmyTempMeterOk = false;
-                AddMessageFollow(2, tempTarget.ToString(), myTempMeter); // send message to warm
-                while (!iSmyTempMeterOk && listenFlag) // check if temperature is stil NOK
-                    Thread.Sleep(refreshTime);
+                try
+                {
+                    if (iSmyTempMeterOk == false)
+                    {
+                        iSmyTempMeterOk = false;
+                        AddMessageFollow(2, tempTarget.ToString(), myTempMeter); // send message to warm
+                    }
+                    while (!iSmyTempMeterOk && listenFlag) // check if temperature is stil NOK
+                        Thread.Sleep(refreshTime);
+                }
+                catch (Exception){}
                 return GlobalVar.Done;
             }
         }
@@ -242,21 +266,25 @@ namespace Equipments
         public void setTempMeter(String name)
         {
             myTempMeter = name;
+            makeLogs("My temp Meter set to "+name);
         }
         public void setTempMeter()
         {
-            myTempMeter = defalutMyTempMeter;
+            setTempMeter(defalutMyTempMeter);
         }
-
         public void setMyRadiator(String name)
         {
             myRadiator = name;
+            makeLogs("My Radiator set to "+name);
         }
         public void setMyRadiator()
         {
-            myRadiator = defalutMyRadiator;
+            setMyRadiator(defalutMyRadiator);
         }
-
+        public void Action()
+        {
+            Task.Run(() => HandleFollowSpecial(2, ""));
+        }
         protected override String HandleFollowSpecial(int order, String argv)
         {
             if (order == 1)
@@ -278,7 +306,7 @@ namespace Equipments
         protected override void HandleResultSpecial(int orderNumer, String argv, String name, String answer)
         {
             if (name==myTempMeter)
-                AddMessageFollow(1, answer, myRadiator);
+                AddMessageFollow(2, answer, myRadiator);
             else if (name == myRadiator && answer == GlobalVar.Done)
                 isRadiatorWorking = false;
         }

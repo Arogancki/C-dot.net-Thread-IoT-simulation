@@ -1,0 +1,19 @@
+Sender - id:0
+45:7623 Transmission started on 142,5-157,5MHz
+45:7813 Change state form DISCONNECTED to CONNECTED
+45:8273 New Reciever 1 TempRegulator
+45:8573 Message sent to 1
+45:8793 Received command: 1..TempMeter
+45:8803 Prepared ERROR message for: 1
+45:9273 Message sent to 1
+45:9973 Message sent to 1
+46:0673 Message sent to 1
+46:0873 Received command: 1..TempMeter
+46:0873 Prepared ERROR message for: 1
+46:1373 Message sent to 1
+46:2073 Message sent to 1
+46:2273 Received command: 1..TempMeter
+46:2273 Prepared ERROR message for: 1
+46:2773 Message sent to 1
+46:3283 Turned down
+

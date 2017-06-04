@@ -1,0 +1,29 @@
+Display - id:1
+19:6077 New message added: 1..Moj ekran2
+19:6077 Added to watch list: Moj ekran2
+19:6087 Connected on 135-150MHz quality: 0,5
+19:6087 Change state form DISCONNECTED to CONNECTED
+19:6217 Attach successful: SingleMessage time: 20ms, gap time: 30ms
+19:6727 Message sent to 0
+19:7247 Received command
+19:7277 Reconfiguration complete: Single:20 to 20 Gap:30 to 70
+19:7447 Message sent to 0
+19:8347 Received results
+19:8347 Received results ERROR: 1..Moj ekran2
+19:8547 Message sent to 0
+19:9447 Received command
+19:9447 Command: 1
+19:9447 Respond sent: Moj ekran1 watches 1 devices.2 for 1..Moj ekran1
+19:9647 Message sent to 0
+20:0747 Message sent to 0
+20:1057 New message added: 1..Moj ekran2
+20:1648 Received command
+20:1648 Command: 1
+20:1648 Respond sent: Moj ekran1 watches 1 devices.2 for 1..Moj ekran1
+20:1848 Message sent to 0
+20:2748 Received results
+20:2748 Received results: 1..Moj ekran2 ans: Moj ekran2 watches 1 devices
+20:2748 received Moj ekran2 status: Moj ekran2 watches 1 devices
+20:2948 Message sent to 0
+20:3868 Turned down
+

@@ -20,6 +20,7 @@ namespace Receivers
         private int timeWait; // gap between meseagers
         private int timeSingle; // time for one way transmission
         private int attachTry;
+        private static int maxAttachTry=3;
         protected Receiver()
         {
             Name = "Receiver" + id;
@@ -78,7 +79,7 @@ namespace Receivers
         {
             if (state!=State.CONNECTED) // if it's unconnected
             {
-                makeLogs("Unable to attach: state:"+state);
+                makeLogs("Unable to attach: state: "+state+". Station not declared");
                 return;
             }
             Data info;
@@ -89,13 +90,13 @@ namespace Receivers
             station.channel.SendAttach(ref info);
             if (info.id==id)
             {
-                if (attachTry++ < 3)
+                if (attachTry++ < maxAttachTry)
                 {
                     makeLogs("Unable to attach. Disconnecting");
                     Disconnect("Unable to Attach");
                     return;
                 }
-                makeLogs("Attach unhandled, restarting attach" + state);
+                makeLogs("Attach unhandled, restarting attach " + state);
                 Attach();
                 return;
             }
@@ -151,7 +152,7 @@ namespace Receivers
                     catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
                 milliseconds =(DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); // set next synchronization point
 
-                makeLogs("traing to get message");
+                //TODO makeLogs("traing to get message");
                 GetMessage(timeSingle);
 
                 try { 
@@ -159,8 +160,8 @@ namespace Receivers
                     }
                     catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
                 milliseconds = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); // set next synchronization point
-                
-                makeLogs("traing to send message");
+
+                //TODO makeLogs("traing to send message");
                 SendMessage();
 
                 try {
@@ -208,14 +209,13 @@ namespace Receivers
                 switch (message.state) 
                 {
                     case State.CONNECTED:
-                        makeLogs("Received: Nothing to do");
+                        //TODO makeLogs("Received: Nothing to do");
                         break;
                     case State.DISCONNECTED:
                         Disconnect("Station shut down. Disconnecting");
                         break;
                     case State.FOLLOW:
                         makeLogs("Received command");
-                        //new Thread(() => HandleFollow(message.description));
                         Task.Run(() => HandleFollow(message.description));
                         break;
                     case State.RESULTS:
@@ -229,7 +229,7 @@ namespace Receivers
         }
         private void HandleResults(String input)
         {
-            // recived results is comand.answer.myid
+            // recived results is rozkaz.argv.nameslave.odp.master.synchtime
             String[] parameters = input.Split('.');
             String command = "";
             int i = 0;
@@ -245,7 +245,7 @@ namespace Receivers
             }
             if (parameters[3] == "ERROR")
             {
-                makeLogs("Received results ERROR: " + input); // incorrect message or user is not connected
+                makeLogs("Received results ERROR: " + command); // incorrect message or user is not connected
                 return;
             }
             makeLogs("Received results: " + command+" ans: "+ parameters[3]);
@@ -253,6 +253,8 @@ namespace Receivers
         }
         private void HandleFollow(String input)
         {
+            // otrzymany rozkaz to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
+            // lub 0.NewTimeSingle.NewTimeWait
             String[] parameters=input.Split('.');
             if (parameters[0] == "0")
             {
@@ -262,16 +264,15 @@ namespace Receivers
                 timeWait = Int32.Parse(parameters[2]);
             }
             else
-            {
-                makeLogs("Command: " + input);
-                // skladnia otrzymanego rozkazu to NUMER ROZKAZU.argumenty.NazwaMoja.idWysylajacego
+            { 
                 String[] parametersC = input.Split('.');
+                makeLogs("Command: " + parametersC[0]+ parametersC[1]);
                 AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) + parameters[3]);
             }
         }
         protected bool AddMessageFollow(int orderNumer, String argv, String name)
         {
-            // SKLADNIA Dodawnanego rozkazu TO NUMER ROZKAZU.argumenty.STRINGNAZWY_AGENTA
+            //wysylana odp to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.odp.master
             String order = orderNumer + "." + argv + "." + name;
             if (waitingForRespond.Contains(order))
             {

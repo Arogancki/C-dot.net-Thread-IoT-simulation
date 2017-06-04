@@ -72,7 +72,7 @@ namespace Senders
                 {
                     milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-                    makeLogs("traing to send message to " + receiver);
+                    //TODO makeLogs("traing to send message to " + receiver);
                     SendMessage(receiver,milliseconds.ToString()); 
                     
                     try { 
@@ -82,7 +82,7 @@ namespace Senders
                         catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
 
                     milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    makeLogs("traing to get message from " + receiver);
+                    //TODO makeLogs("traing to get message from " + receiver);
                     GetMessage(receiver,timeSingle);
                     
                     try { 
@@ -104,16 +104,18 @@ namespace Senders
                 channel.ReceiveAttach(ref newReceiver); // if Data is returned new receiver has attached
                 if (newReceiver.id != id) // new reciver
                 {
-                    makeLogs("New Reciever " + newReceiver.id + " " + newReceiver.description);
-                    ReconfigureALL(timeSingle, timeSpace + (receivers.Count * 2 * timeSingle));
-                    receivers.Add(newReceiver.id);
-                    receiversNames.Add(newReceiver.id, newReceiver.description);
-                    messages.Add(newReceiver.id, new LinkedList<Data>());
-                    newReceiver.state = State.CONNECTED;
+                    if (!receivers.Contains(newReceiver.id))
+                    {
+                        makeLogs("New Reciever " + newReceiver.id + " " + newReceiver.description);
+                        ReconfigureALL(timeSingle, timeSpace + (receivers.Count*2*timeSingle));
+                        receivers.Add(newReceiver.id);
+                        receiversNames.Add(newReceiver.id, newReceiver.description);
+                        messages.Add(newReceiver.id, new LinkedList<Data>());
+                    }
+                    newReceiver.state = State.DISCONNECTED;
                     newReceiver.id = id;
                     newReceiver.direction = Direction.DL;
                 }
-                // KONIEC WATEK ATTACH
                 //wait timeSpace
 
                 temp = new List<int>(receivers);
@@ -152,7 +154,10 @@ namespace Senders
 
             if (message.id != receiver || message.direction!=Direction.UL) // odebrano wiadomosc od zlego receivera
             {
-                makeLogs("Received message from " + message.id+" in "+message.direction + ". Disconnecting from station");
+                if (message.id== receiver && message.direction==Direction.DL)
+                    makeLogs("Reciver didn't answered. Disconnecting from station");
+                else
+                    makeLogs("Received message from " + message.id+" in "+message.direction + ". Disconnecting from station");
                 DeleteReceiver(receiver);
             }
             else
@@ -160,7 +165,7 @@ namespace Senders
                 switch (message.state)
                 {
                     case State.CONNECTED:
-                        makeLogs("Received: Nothing to do");
+                        //TODO makeLogs("Received: Nothing to do");
                         break;
                     case State.DISCONNECTED:
                         makeLogs("Receiver shuts down. Cause: "+message.description);
@@ -218,8 +223,8 @@ namespace Senders
             Data temp = new Data();
             temp.direction = Direction.DL;
             temp.state = State.FOLLOW;
-            temp.description = input + "." + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego
-            String[] parameters = input.Split('.'); // SKLADNIA otzrymanego rozkazu TO NUMER ROZKAZU.argumenty.STRINGNAZWY_AGENTA
+            temp.description = input + "." + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
+            String[] parameters = input.Split('.');
             foreach (var receiver in receiversNames)
             {
                 if (receiver.Value == parameters[2])
@@ -233,7 +238,7 @@ namespace Senders
              // if there isn't reciver with this name send that hi dont exist
             temp.id = master;
             temp.state = State.RESULTS;
-            temp.description += "ERROR";// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
+            temp.description = input+".ERROR." +master;// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
             messages[master].AddLast(temp);
             makeLogs("Prepared ERROR message for: " + master);
             

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using Devices;
 using Equipments;
 using Senders;
 
@@ -7,28 +8,19 @@ namespace ConsoleApplication9
 {
     class Program
     {
-        static String logFile= "C:\\Users\\Artur\\Documents\\Visual Studio 2015\\Projects\\MISS\\ConsoleApplication9\\logi";
+        private static String logFile = Environment.CurrentDirectory+"\\..\\..\\..\\logi"; 
         static void Main(string[] args)
         {
-            Sender station = new Sender(10,10);
+            Sender station = new Sender(20,30);
             station.StartTransmission(150, 5);
+            
+            TempRegulator u1=new TempRegulator(100);
+            u1.BlindDecoding();
+            u1.Attach();
+            
 
-            Display z1 =new Display("Moj ekran",50);
-            z1.addNewPreview(z1.Name+"ek");
-            z1.BlindDecoding();
-            z1.Attach();
-
-            Display z2 = new Display("Moj ekran", 50);
-            z1.addNewPreview(z1.Name + "eg");
-            z1.BlindDecoding();
-            z1.Attach();
-
-            Thread.Sleep(200);
-
-            z1.TurnOff();
-            station.TurnOff();
-            z1.SaveLogsToFile(logFile + "\\Moj ekran");
-            station.SaveLogsToFile(logFile + "\\station");
+            Thread.Sleep(500);
+            Device.DeviceContainer.RemoveAll();
         }
     }
 }
