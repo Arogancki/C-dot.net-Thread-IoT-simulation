@@ -97,9 +97,9 @@ namespace Senders
                 //WATEK ATTACH
                 timeSpaceToSend = timeSpace + (receivers.Count * 2 * timeSingle)
                     /*- (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds)*/;
-                newReceiver.description = timeSingle + "." //single time for 1 way transmission
+                newReceiver.description = timeSingle + "#" //single time for 1 way transmission
                     + timeSpaceToSend // time between all transmission
-                     + "." + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); //actual time
+                     + "#" + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); //actual time
 
                 channel.ReceiveAttach(ref newReceiver); // if Data is returned new receiver has attached
                 if (newReceiver.id != id) // new reciver
@@ -196,19 +196,19 @@ namespace Senders
             LinkedList<Data> temp = messages[receiver];
             if (temp.Count > 0) // if there is message for receiver
             {
-                channel.setChannel(temp.First(), "." + time);
+                channel.setChannel(temp.First(), "#" + time);
                 temp.RemoveFirst();
                 if (GlobalVarDevice.DetailedLogs) makeLogs("Message sent to " + receiver);
             }
             else
             {
-                channel.setChannel(receiver, State.CONNECTED, "." + time, Direction.DL); // send defalut message
+                channel.setChannel(receiver, State.CONNECTED, "#" + time, Direction.DL); // send defalut message
                 //makeLogs("Message sent to " + receiver);
             }
         }
         private void HandleResults(String input)
         {
-            String[] parameters = input.Split('.');
+            String[] parameters = input.Split('#');
             int receiver = Int32.Parse(parameters[4]);
             if (receiversNames.ContainsKey(receiver))
             {
@@ -224,8 +224,8 @@ namespace Senders
             Data temp = new Data();
             temp.direction = Direction.DL;
             temp.state = State.FOLLOW;
-            temp.description = input + "." + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
-            String[] parameters = input.Split('.');
+            temp.description = input + "#" + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
+            String[] parameters = input.Split('#');
             foreach (var receiver in receiversNames)
             {
                 if (receiver.Value == parameters[2])
@@ -239,10 +239,9 @@ namespace Senders
              // if there isn't reciver with this name send that hi dont exist
             temp.id = master;
             temp.state = State.RESULTS;
-            temp.description = input+".ERROR." +master;// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
+            temp.description = input+"#ERROR#" +master;// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
             messages[master].AddLast(temp);
             makeLogs("Prepared ERROR message for: " + master);
-            
         }
         private void ReconfigureALL(int single, int space)
         {
@@ -250,15 +249,16 @@ namespace Senders
             {
                 Reconfigure(receiver,single,space);
             }
+            makeLogs("Reconfiguration Prepered for all");
         }
         private void Reconfigure(int receiver, int single, int space)
         {
             Data temp=new Data();
             temp.id = receiver;
             temp.state=State.FOLLOW;
-            temp.description = "0." + single + "." + space; // 0 - means reconfiguration
+            temp.description = "0#" + single + "#" + space; // 0 - means reconfiguration
             temp.direction=Direction.DL;
-            if (messages[receiver].Count > 0 && messages[receiver].First().description.Split('.').First() == "0")
+            if (messages[receiver].Count > 0 && messages[receiver].First().description.Split('#').First() == "0")
                 messages[receiver].RemoveFirst(); // remove previously reconfiguration if exist
             messages[receiver].AddFirst(temp); 
         }

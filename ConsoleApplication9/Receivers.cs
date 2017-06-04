@@ -102,7 +102,7 @@ namespace Receivers
             }
             attachTry = 0;
             sender = info.id;
-            String[] times = info.description.Split('.');
+            String[] times = info.description.Split('#');
             timeSingle = Int32.Parse(times[0]);
             timeWait = Int32.Parse(times[1]);
             milliseconds= Int64.Parse(times[2]); // first time it have to be deducted from timeWait to synchronization with sender
@@ -222,18 +222,18 @@ namespace Receivers
                         break;
                 }
                 // update time:
-                milliseconds = Int64.Parse(message.description.Split('.').Last());
+                milliseconds = Int64.Parse(message.description.Split('#').Last());
             }
         }
         private void HandleResults(String input)
         {
             // recived results is rozkaz.argv.nameslave.odp.master.synchtime
-            String[] parameters = input.Split('.');
+            String[] parameters = input.Split('#');
             String command = "";
             int i = 0;
             for (; i < parameters.Length - 3; i++)
             {
-                if (i != 0) command += ".";
+                if (i != 0) command += "#";
                 command += parameters[i];
             }
             if (!waitingForRespond.Remove(command))
@@ -241,14 +241,14 @@ namespace Receivers
                 makeLogs("Received missmatched results: " + input);
                 return;
             }
-            makeLogs("Received results: " + command+" ans: "+ parameters[3]);
+            if (GlobalVarDevice.DetailedLogs) makeLogs("Received results: " + command+" ans: "+ parameters[3]);
             HandleResultSpecial(Int32.Parse(parameters[0]), parameters[1], parameters[2], parameters[3]);
         }
         private void HandleFollow(String input)
         {
             // otrzymany rozkaz to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
             // lub 0.NewTimeSingle.NewTimeWait
-            String[] parameters=input.Split('.');
+            String[] parameters=input.Split('#');
             if (parameters[0] == "0")
             {
                 makeLogs("Reconfiguration complete: Single:" + timeSingle + " to " + parameters[1] + " Gap:" +
@@ -258,18 +258,18 @@ namespace Receivers
             }
             else
             { 
-                String[] parametersC = input.Split('.');
+                String[] parametersC = input.Split('#');
                 makeLogs("Command: " + parametersC[0]+ parametersC[1]);
-                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) +"."+ parameters[3]);
+                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) +"#"+ parameters[3]);
             }
         }
         protected bool AddMessageFollow(int orderNumer, String argv, String name)
         {
             //wysylana odp to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.odp.master
-            String order = orderNumer + "." + argv + "." + name;
+            String order = orderNumer + "#" + argv + "#" + name;
             if (waitingForRespond.Contains(order))
             {
-                makeLogs("Still havent got respond for: "+order);
+                if (GlobalVarDevice.DetailedLogs) makeLogs("Still havent got respond for: "+order);
                 return false; // if order hasnt get respond
             }
             Data temp = new Data();
@@ -285,15 +285,15 @@ namespace Receivers
         protected void AddMessageResults(String receiverOrder, String answer)
         {
             // SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
-            String[] parameters = receiverOrder.Split('.');
+            String[] parameters = receiverOrder.Split('#');
             String command = "";
             int i = 0;
             for (; i < parameters.Length - 2; i++)
             {
-                if (i != 0) command += ".";
+                if (i != 0) command += "#";
                 command += parameters[i];
             }
-            String order = command + "." + answer;
+            String order = command + "#" + answer;
             Data temp = new Data();
             temp.id = id;
             temp.state = State.RESULTS;

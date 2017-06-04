@@ -73,6 +73,8 @@ namespace Devices
         internal void hardTurnOff()
         {
             listenFlag = false;
+            if (state!=State.DISCONNECTED)
+                changeState(State.DISCONNECTED);
             makeLogs("Turned down");
             try
             {

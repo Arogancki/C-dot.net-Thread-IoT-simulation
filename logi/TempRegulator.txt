@@ -1,14 +1,26 @@
 TempRegulator - id:1
-17-06-04 12:44:41:3392 New message added: 1..TempMeter
-17-06-04 12:44:41:3402 Connected on 135-150MHz quality: 0,5
-17-06-04 12:44:41:3402 Change state form DISCONNECTED to CONNECTED
-17-06-04 12:44:41:3712 Attach successful: SingleMessage time: 20ms, gap time: 30ms
-17-06-04 12:44:41:4392 Still havent got respond for: 1..TempMeter
-17-06-04 12:44:41:5522 Still havent got respond for: 1..TempMeter
-17-06-04 12:44:41:5682 Reconfiguration complete: Single:20 to 20 Gap:30 to 70
-17-06-04 12:44:41:7032 Still havent got respond for: 1..TempMeter
-17-06-04 12:44:41:7242 Station didn't answer. Disconnecting from station
-17-06-04 12:44:41:7242 Change state form CONNECTED to DISCONNECTED
-17-06-04 12:44:41:7242 Disconnecting cause: Station didn't answer.
-17-06-04 12:44:41:9872 Turned down
+17-06-04 12:58:18:9819 Connected on 135-150MHz quality: 0,5
+17-06-04 12:58:18:9819 Change state form DISCONNECTED to CONNECTED
+17-06-04 12:58:18:9829 New message added: 1##TempMeter
+17-06-04 12:58:19:0129 Attach successful: SingleMessage time: 20ms, gap time: 30ms
+17-06-04 12:58:19:0829 Still havent got respond for: 1##TempMeter
+17-06-04 12:58:19:1149 Reconfiguration complete: Single:20 to 20 Gap:30 to 70
+17-06-04 12:58:19:1829 Still havent got respond for: 1##TempMeter
+17-06-04 12:58:19:2229 Received results: 1##TempMeter ans: ERROR
+17-06-04 12:58:19:2229 Cooperating devices not connected
+17-06-04 12:58:19:2229 New message added: 2#ERROR#Radiator
+17-06-04 12:58:19:2829 New message added: 1##TempMeter
+17-06-04 12:58:19:3330 Received results: 2#ERROR#Radiator ans: ERROR
+17-06-04 12:58:19:3330 Cooperating devices not connected
+17-06-04 12:58:19:3840 Still havent got respond for: 1##TempMeter
+17-06-04 12:58:19:4430 Received results: 1##TempMeter ans: 17,8
+17-06-04 12:58:19:4430 New message added: 2#17,8#Radiator
+17-06-04 12:58:19:4840 New message added: 1##TempMeter
+17-06-04 12:58:19:5560 Received results: 2#17,8#Radiator ans: ERROR
+17-06-04 12:58:19:5560 Cooperating devices not connected
+17-06-04 12:58:19:5880 Still havent got respond for: 1##TempMeter
+17-06-04 12:58:19:6690 Turned down
+17-06-04 12:58:19:7540 Station didn't answer. Disconnecting from station
+17-06-04 12:58:19:7540 Change state form CONNECTED to DISCONNECTED
+17-06-04 12:58:19:7540 Disconnecting cause: Station didn't answer.
 

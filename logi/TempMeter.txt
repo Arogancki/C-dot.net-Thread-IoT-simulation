@@ -1,9 +1,13 @@
 TempMeter - id:2
-17-06-04 12:44:41:3852 Connected on 135-150MHz quality: 0,5
-17-06-04 12:44:41:3852 Change state form DISCONNECTED to CONNECTED
-17-06-04 12:44:41:4592 Attach successful: SingleMessage time: 20ms, gap time: 70ms
-17-06-04 12:44:41:6962 Station didn't answer. Disconnecting from station
-17-06-04 12:44:41:6972 Change state form CONNECTED to DISCONNECTED
-17-06-04 12:44:41:6972 Disconnecting cause: Station didn't answer.
-17-06-04 12:44:41:9942 Turned down
+17-06-04 12:58:19:0139 Connected on 135-150MHz quality: 0,5
+17-06-04 12:58:19:0139 Change state form DISCONNECTED to CONNECTED
+17-06-04 12:58:19:0829 Attach successful: SingleMessage time: 20ms, gap time: 70ms
+17-06-04 12:58:19:3730 Command: 1
+17-06-04 12:58:19:3730 Respond sent: 17,8#1 for 1##TempMeter
+17-06-04 12:58:19:5960 Command: 1
+17-06-04 12:58:19:5960 Respond sent: 17,7#1 for 1##TempMeter
+17-06-04 12:58:19:8260 Station didn't answer. Disconnecting from station
+17-06-04 12:58:19:8260 Change state form CONNECTED to DISCONNECTED
+17-06-04 12:58:19:8260 Disconnecting cause: Station didn't answer.
+17-06-04 12:58:19:8260 Turned down
 
