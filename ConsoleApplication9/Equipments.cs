@@ -17,7 +17,7 @@ namespace Equipments
         //1- get number of wachers
         //other - get list of wachers
         private List<String[]> watchList;
-        static private int defalutRefreshTime= 10000;
+        static private int defalutRefreshTime= 1000;
         static private String defalutName="Display";
         private Semaphore watchListSemaphore;
         public int refreshTime;
@@ -174,7 +174,7 @@ namespace Equipments
         // ORDERS:
         //1- is my temp ok
         //2-start heating
-        static private int defalutRefreshTime = 1000;
+        static private int defalutRefreshTime = 500;
         static private String defalutName = "Radiator";
         static private float defalutTempTarget = 20.0f;
         private float tempTarget= defalutTempTarget;

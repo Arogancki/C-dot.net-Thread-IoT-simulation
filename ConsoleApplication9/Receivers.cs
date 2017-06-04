@@ -260,7 +260,7 @@ namespace Receivers
             { 
                 String[] parametersC = input.Split('.');
                 makeLogs("Command: " + parametersC[0]+ parametersC[1]);
-                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) + parameters[3]);
+                AddMessageResults(input, HandleFollowSpecial(Int32.Parse(parametersC[0]), parametersC[1]) +"."+ parameters[3]);
             }
         }
         protected bool AddMessageFollow(int orderNumer, String argv, String name)

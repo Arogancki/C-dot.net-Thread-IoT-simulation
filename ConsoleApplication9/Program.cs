@@ -17,7 +17,11 @@ namespace ConsoleApplication9
             TempRegulator u1=new TempRegulator(100);
             u1.BlindDecoding();
             u1.Attach();
-            
+
+            TempMeter u2 = new TempMeter();
+            u2.BlindDecoding();
+            u2.Attach();
+
             Thread.Sleep(500);
             Device.DeviceContainer.RemoveAll();
         }
