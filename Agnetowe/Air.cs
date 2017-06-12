@@ -22,7 +22,7 @@ namespace Air
             temp.bandwidthStart=start;
             temp.bandwidthEnd=end;
             temp.quality = 1.0f;
-            temp.channel=new Channel();
+            temp.channel=new Channel(sender.id);
             foreach (Station station in stations)
             {
                 float freqMatchLenght = (end > station.bandwidthEnd ? station.bandwidthEnd : end) -
@@ -31,6 +31,10 @@ namespace Air
                     temp.channel = station.channel;
             }
             return temp;
+        }
+        public static void RemoveStation(Channel channel)
+        {
+            stations.RemoveAll(x => x.channel == channel);
         }
         public static Channel NewTransmission(float start, float end, Sender sender)
         {
@@ -64,7 +68,8 @@ namespace Air
         private Semaphore channelSemaphore;
         private Data attachChannel; //common memmory for attach
         private Data channel;// common memmory for connection
-        public Channel()
+        private int defalutAttachChannelID;
+        public Channel(int _id)
         {
             channel=new Data();
             attachChannel = new Data();
@@ -73,12 +78,20 @@ namespace Air
             attachSender=new Semaphore(1,1);
             attachSender.WaitOne(); // fake attachSender lock
             channelSemaphore.WaitOne();
+            defalutAttachChannelID = _id;
+            ResetAttachChannel();
         }
         ~Channel()
         {
             // attachReceiver.Dispose();
             // attachSender.Dispose();
         }
+
+        internal void ResetAttachChannel()
+        {
+            attachChannel.id = defalutAttachChannelID;
+        }
+
         public Data getChanel(int timeOut)
         {
             if (channelSemaphore.WaitOne(timeOut)) return channel;
@@ -128,18 +141,37 @@ namespace Air
         {
             if(!attachReceiver.WaitOne(5000)) return;
             attachChannel = input; // save receiver input
-            if (!attachSender.WaitOne(5000)) return;
-            input = attachChannel; // get sender input 
+            if (!attachSender.WaitOne(5000))
+            {
+                attachChannel.id = -1;
+                attachReceiver.Release();
+                return;
+            }
+            input = attachChannel; // get sender input
+            ResetAttachChannel();
             attachReceiver.Release();
         }
-        public void ReceiveAttach(ref Data input) // return in info if new attached
+        public void ReceiveAttach(ref Data input, List<string> alreadConnected) // return in info if new attached
         {
-            if (attachChannel.id != input.id)
+            if (attachChannel.id != input.id && attachChannel.id>=0)
             {
-                Data temp = attachChannel;
-                attachChannel = input; // save sender input
-                input = temp; // get receiver input
+                if (alreadConnected.Contains(attachChannel.description))
+                {
+                    // Name is already taken
+                    attachChannel.id = -1;
+                    attachChannel.direction = Direction.DL;
+                    attachChannel.description = "Name is already taken";
+                    attachChannel.state = State.DISCONNECTED;
+                }
+                else
+                { 
+                    // everything's gone well
+                    Data temp = attachChannel;
+                    attachChannel = input; // save sender input
+                    input = temp; // get receiver input
+                }
                 attachSender.Release();
+
             }
         }
     }

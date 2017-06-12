@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Agnetowe;
 using Air;
 using Devices;
 
@@ -18,17 +19,26 @@ namespace Senders
         private List<int> receivers;
         private int timeSpace; // to catch a breath before all server task
         private int timeSingle; // time to signle transmission to or from receiver, 2 for user
-        public Sender(int _timeSingle, int _timeSpace)
+        public Sender(int _timeSingle, int _timeSpace, string _Name)
         {
-            Name = "Sender" + id;
+            if (_timeSingle < 3)
+                _timeSingle = 3;
+            if (_timeSpace < 3)
+                _timeSpace = 3;
+            if (_Name=="")
+                Name = "Router" + id;
+            else
+               Name = _Name;
             receivers = new List<int>();
             messages = new Dictionary<int, LinkedList<Data>>();
             receiversNames = new Dictionary<int, string>();
             timeSpace = _timeSpace;
             timeSingle = _timeSingle;
+            makeLogs("Short time "+timeSingle+" "+"Long time "+timeSpace+".");
         }
         ~Sender()
         {
+            IMGstate = false;
             TurnOff();
         }
         public void StartTransmission(float freq, int bandwidthIndex)
@@ -44,6 +54,7 @@ namespace Senders
             channel = AirInterface.NewTransmission(start, end, this);
             makeLogs("Transmission started on " + start + "-" + end+"MHz");
             changeState(State.CONNECTED);
+            IMGstate = true;
             listenFlag = true;
             listen =new Thread(Listen);
             listen.Start();
@@ -52,79 +63,97 @@ namespace Senders
         {
             StartTransmission(defalutFreq, defalutBandwidthIndex);
         }
-        public void Disconnect()
+        public override void Disconnect()
         {
-            listenFlag = false;
+            if (state != State.DISCONNECTED)
+            {
+                AirInterface.RemoveStation(channel);
+                makeLogs("Disconnected. Transmission has stopped");
+                IMGstate = false;
+                listenFlag = false;
+                changeState(State.DISCONNECTED);
+            }
         }
         private void Listen()
         {
-            Data newReceiver = new Data();
-            temp=new List<int>(receivers);
-            newReceiver.state = State.CONNECTED;
-            newReceiver.id = id;
-            newReceiver.direction=Direction.DL;
-            long milliseconds;
-            int timeSpaceToSend;
-            while (listenFlag)
+            try
             {
-
-                foreach (var receiver in temp)
+                Data newReceiver = new Data();
+                temp = new List<int>(receivers);
+                newReceiver.state = State.CONNECTED;
+                newReceiver.id = id;
+                newReceiver.direction = Direction.DL;
+                long milliseconds;
+                int timeSpaceToSend;
+                while (listenFlag)
                 {
-                    milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
 
-                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message to " + receiver);
-                    SendMessage(receiver,milliseconds.ToString()); 
-                    
-                    try { 
-                        Thread.Sleep(timeSingle // time to recive message
-                        - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)-milliseconds)); // difference from now and start time
+                    foreach (var receiver in temp)
+                    {
+                        milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("traing to send message to " + receiver);
+                        SendMessage(receiver, milliseconds.ToString());
+
+                        try
+                        {
+                            Thread.Sleep(timeSingle // time to recive message
+                                         - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                            // difference from now and start time
                         }
-                        catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                        } // no need to handle -time exception, just do NOT wait
 
-                    milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-                    if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message from " + receiver);
-                    GetMessage(receiver,timeSingle);
-                    
-                    try { 
-                        Thread.Sleep(timeSingle // time to recive message
-                        - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond)-milliseconds));
+                        milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
+                        if (GlobalVarDevice.DetailedLogs) makeLogs("traing to get message from " + receiver);
+                        GetMessage(receiver, timeSingle);
+
+                        try
+                        {
+                            Thread.Sleep(timeSingle // time to recive message
+                                         - (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
                         }
-                        catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
-                }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                        } // no need to handle -time exception, just do NOT wait
+                    }
 
-                milliseconds = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+                    milliseconds = DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond;
 
-                //WATEK ATTACH
-                timeSpaceToSend = timeSpace + (receivers.Count * 2 * timeSingle)
-                    /*- (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds)*/;
-                newReceiver.description = timeSingle + "." //single time for 1 way transmission
-                    + timeSpaceToSend // time between all transmission
-                     + "." + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond); //actual time
+                    //WATEK ATTACH
+                    timeSpaceToSend = timeSpace + (receivers.Count*2*timeSingle)
+                        /*- (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds)*/;
+                    newReceiver.description = timeSingle + "#" //single time for 1 way transmission
+                                              + timeSpaceToSend // time between all transmission
+                                              + "#" + (DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond); //actual time
 
-                channel.ReceiveAttach(ref newReceiver); // if Data is returned new receiver has attached
-                if (newReceiver.id != id) // new reciver
-                {
-                    if (!receivers.Contains(newReceiver.id))
+                    channel.ReceiveAttach(ref newReceiver, receiversNames.Values.ToList()); // if Data is returned new receiver has attached
+                    if (newReceiver.id != id) // new reciver
                     {
                         makeLogs("New Reciever " + newReceiver.id + " " + newReceiver.description);
                         ReconfigureALL(timeSingle, timeSpace + (receivers.Count*2*timeSingle));
                         receivers.Add(newReceiver.id);
                         receiversNames.Add(newReceiver.id, newReceiver.description);
                         messages.Add(newReceiver.id, new LinkedList<Data>());
+                        newReceiver.state = State.DISCONNECTED;
+                        newReceiver.id = id;
+                        newReceiver.direction = Direction.DL;
                     }
-                    newReceiver.state = State.DISCONNECTED;
-                    newReceiver.id = id;
-                    newReceiver.direction = Direction.DL;
-                }
-                //wait timeSpace
+                    //wait timeSpace
 
-                temp = new List<int>(receivers);
-                try
-                {
-                    Thread.Sleep(timeSpace - (int)((DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) - milliseconds));
+                    temp = new List<int>(receivers);
+                    try
+                    {
+                        Thread.Sleep(timeSpace -
+                                     (int) ((DateTime.Now.Ticks/TimeSpan.TicksPerMillisecond) - milliseconds));
+                    }
+                    catch (ArgumentOutOfRangeException e)
+                    {
+                    } // no need to handle -time exception, just do NOT wait
                 }
-                catch (ArgumentOutOfRangeException e) { } // no need to handle -time exception, just do NOT wait
             }
+            catch (Exception e){}
         }
         private void DeleteReceiver(int receiver)
         {
@@ -196,19 +225,19 @@ namespace Senders
             LinkedList<Data> temp = messages[receiver];
             if (temp.Count > 0) // if there is message for receiver
             {
-                channel.setChannel(temp.First(), "." + time);
+                channel.setChannel(temp.First(), "#" + time);
                 temp.RemoveFirst();
                 if (GlobalVarDevice.DetailedLogs) makeLogs("Message sent to " + receiver);
             }
             else
             {
-                channel.setChannel(receiver, State.CONNECTED, "." + time, Direction.DL); // send defalut message
+                channel.setChannel(receiver, State.CONNECTED, "#" + time, Direction.DL); // send defalut message
                 //makeLogs("Message sent to " + receiver);
             }
         }
         private void HandleResults(String input)
         {
-            String[] parameters = input.Split('.');
+            String[] parameters = input.Split('#');
             int receiver = Int32.Parse(parameters[4]);
             if (receiversNames.ContainsKey(receiver))
             {
@@ -224,8 +253,8 @@ namespace Senders
             Data temp = new Data();
             temp.direction = Direction.DL;
             temp.state = State.FOLLOW;
-            temp.description = input + "." + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
-            String[] parameters = input.Split('.');
+            temp.description = input + "#" + master;/// skladnia wysylanego rozkazu to NUMER ROZKAZU.argumenty.NazwaOtzyujacego.idWysylajacego.czasSynchronizacji
+            String[] parameters = input.Split('#');
             foreach (var receiver in receiversNames)
             {
                 if (receiver.Value == parameters[2])
@@ -239,10 +268,9 @@ namespace Senders
              // if there isn't reciver with this name send that hi dont exist
             temp.id = master;
             temp.state = State.RESULTS;
-            temp.description = input+".ERROR." +master;// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
+            temp.description = input+"#ERROR#" +master;// SKLADNIA Dodawnaych resultatow string_rozkazu.odpowiedz
             messages[master].AddLast(temp);
             makeLogs("Prepared ERROR message for: " + master);
-            
         }
         private void ReconfigureALL(int single, int space)
         {
@@ -250,17 +278,42 @@ namespace Senders
             {
                 Reconfigure(receiver,single,space);
             }
+            makeLogs("Reconfiguration Prepered for all");
         }
         private void Reconfigure(int receiver, int single, int space)
         {
             Data temp=new Data();
             temp.id = receiver;
             temp.state=State.FOLLOW;
-            temp.description = "0." + single + "." + space; // 0 - means reconfiguration
+            temp.description = "0#" + single + "#" + space; // 0 - means reconfiguration
             temp.direction=Direction.DL;
-            if (messages[receiver].Count > 0 && messages[receiver].First().description.Split('.').First() == "0")
+            if (messages[receiver].Count > 0 && messages[receiver].First().description.Split('#').First() == "0")
                 messages[receiver].RemoveFirst(); // remove previously reconfiguration if exist
             messages[receiver].AddFirst(temp); 
+        }
+        public override void HandleClick(string button)
+        {
+            if (button == "Start transmission")
+            {
+                if (state == State.DISCONNECTED)
+                {
+                    StartTransmission(IoT.GetInputFloat("Frequency", defalutFreq),
+                        IoT.GetInputInt("Bandwidth range (0 to " + (Bandwidth.Length - 1) + ")", defalutBandwidthIndex));
+                    IoT.ShowMessage("Transmission started");
+                }
+                else
+                    IoT.ShowMessage("Already transmitting");
+            }
+            else if (button == "Disconnect")
+            {
+                if (state != State.DISCONNECTED)
+                {
+                    Disconnect();
+                    IoT.ShowMessage("Disconnected");
+                }
+                else
+                    IoT.ShowMessage("Already disconnected");
+            }
         }
     }
 }

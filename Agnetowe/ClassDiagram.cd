@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Air.AirInterface">
+    <Position X="4.25" Y="2.5" Width="1.5" />
+    <NestedTypes>
+      <Struct Name="Air.AirInterface.Station" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Air.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Struct>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>CAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAQABAAAAAAAEA=</HashCode>
+      <FileName>Air.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Devices.Device">
+    <Position X="0.75" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_id" Hidden="true" />
+    </Members>
+    <NestedTypes>
+      <Class Name="Devices.Device.GlobalVarDevice" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Devices.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="Devices.Device.DeviceContainer" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Devices.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ABQAAAACQAAEkQAEAAxACQQlAAQAiAAEAAAGAAAAEgA=</HashCode>
+      <FileName>Devices.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Equipments.Display">
+    <Position X="8" Y="3.25" Width="1.5" />
+    <Members>
+      <Method Name="Action" Hidden="true" />
+      <Field Name="watchListSemaphore" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="Receivers.Receiver" FixedFromPoint="true">
+      <Path>
+        <Point X="7.5" Y="2.813" />
+        <Point X="8.75" Y="2.813" />
+        <Point X="8.75" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>CCgAEAAAAAAAAAAQEDBAAAAAgAAABAAAAEAAAEAAEAQ=</HashCode>
+      <FileName>Equipments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Equipments.TempMeter">
+    <Position X="9.75" Y="3.25" Width="1.5" />
+    <InheritanceLine Type="Receivers.Receiver" FixedFromPoint="true">
+      <Path>
+        <Point X="7.5" Y="2.813" />
+        <Point X="10.5" Y="2.813" />
+        <Point X="10.5" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAgAEAAAAAAAAAAQEBAAAAAAAAAABACAAAAAAEAAEAA=</HashCode>
+      <FileName>Equipments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Equipments.Radiator">
+    <Position X="13.25" Y="3.25" Width="1.5" />
+    <Members>
+      <Method Name="Action" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="Receivers.Receiver" FixedFromPoint="true">
+      <Path>
+        <Point X="7.5" Y="2.813" />
+        <Point X="14" Y="2.813" />
+        <Point X="14" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>EAgAAAAAAAIAAAAQEBAAAAkAAABEBAAAAAAAAAAAEAQ=</HashCode>
+      <FileName>Equipments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Equipments.TempRegulator">
+    <Position X="11.5" Y="3.25" Width="1.5" />
+    <Members>
+      <Method Name="Action" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="Receivers.Receiver" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="7.5" Y="2.813" />
+        <Point X="12.25" Y="2.813" />
+        <Point X="12.25" Y="3.25" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AAgAEAAEAAIAAEAQEBAAAAkACAAABAAAAgAAAEAAEAQ=</HashCode>
+      <FileName>Equipments.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Receivers.Receiver">
+    <Position X="6" Y="2.5" Width="1.5" />
+    <InheritanceLine Type="Devices.Device" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.5" Y="0.5" />
+        <Point X="1.5" Y="0.26" />
+        <Point X="6.75" Y="0.26" />
+        <Point X="6.75" Y="2.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>ADwAAIDgQMAQgHAQADAIAAAAAIEAhAgBABCAAAQAEAA=</HashCode>
+      <FileName>Receivers.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Senders.Sender">
+    <Position X="2.5" Y="2.5" Width="1.5" />
+    <Members>
+      <Field Name="receivers" Hidden="true" />
+      <Method Name="ReconfigureALL" Hidden="true" />
+      <Field Name="temp" Hidden="true" />
+    </Members>
+    <InheritanceLine Type="Devices.Device" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="1.5" Y="0.5" />
+        <Point X="1.5" Y="0.26" />
+        <Point X="3.25" Y="0.26" />
+        <Point X="3.25" Y="2.5" />
+      </Path>
+    </InheritanceLine>
+    <TypeIdentifier>
+      <HashCode>AiQAAQgAAAAAIGAAACAAgAAAAAAAAgCBBACCAAQAEAA=</HashCode>
+      <FileName>Senders.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

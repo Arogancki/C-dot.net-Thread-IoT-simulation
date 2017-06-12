@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using Agnetowe;
 using Receivers;
-
 
 namespace Equipments
 { 
@@ -17,34 +19,47 @@ namespace Equipments
         //1- get number of wachers
         //other - get list of wachers
         private List<String[]> watchList;
-        static private int defalutRefreshTime= 10000;
+        private Form3 monitor;
+        static private int defalutRefreshTime= 1000;
         static private String defalutName="Display";
         private Semaphore watchListSemaphore;
         public int refreshTime;
-        public Display(int _refreshTime) : this(defalutName, _refreshTime) {}
+        public Display(int _refreshTime) : this(defalutName, _refreshTime)
+        {
+            Name += id;
+            monitor.Text += id;
+        }
         public Display(String name) : this(name, defalutRefreshTime) {}
         public Display() : this(defalutName) {}
-        public Display(String name, int _refreshTime)
+        public Display(String name, int _refreshTime):base (name)
         {
-            Name = name;
             refreshTime = _refreshTime;
             watchList = new List<String[]>();
             tasks=new List<Thread>();
             watchListSemaphore= new Semaphore(1, 1);
-            tasks.Add(new Thread(TimeTask1));
-            tasks[0].Start();
+            monitor=new Form3();
+            monitor.StartPosition = FormStartPosition.CenterParent;
+            monitor.Text = Name;
+            Task.Run(() => monitor.ShowDialog());
+        }
+        public override void TurnOff()
+        {
+            base.TurnOff();
+            if (monitor != null) monitor.Close();
         }
         public String printDisplay()
         {
-            String output = "";
+            String output = Name +" shows:\n";
             foreach (var i in watchList)
             {
-                output += i[0] + ": " + i[1] + "\n";
+                output += "# "+i[0] + ": " + i[1] + "\n";
             }
             return output;
         }
         public void AddNewPreview(String name)
         {
+            if (name == "")
+                return;
             if (AddMessageFollow(1, "", name))
             {
                 String[] temp = {name, "NA"};
@@ -58,6 +73,8 @@ namespace Equipments
         }
         public void RemovePreview(String name)
         {
+            if (name == "")
+                return;
             for (int i = 0; i < watchList.Count; i++)
                 if (watchList[i][0] == name)
                 {
@@ -65,7 +82,9 @@ namespace Equipments
                     watchListSemaphore.WaitOne();
                     watchList.RemoveAt(i);
                     watchListSemaphore.Release();
+                    return;
                 }
+            makeLogs("Could not find: " + name);
         }
         public void Action()
         {
@@ -104,8 +123,9 @@ namespace Equipments
             {
                 if (device[0] == name)
                 {
-                    makeLogs("received "+name+" status: "+answer);
+                    if (GlobalVarDevice.DetailedLogs) makeLogs("received "+name+" status: "+answer);
                     device[1] = answer;
+                    if (monitor != null) monitor.label1.Text = printDisplay();
                     return;
                 }
             }
@@ -113,11 +133,39 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            IMGstate = true;
+            try
             {
-                RefreshWatchListStatus();
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    RefreshWatchListStatus();
+                    Thread.Sleep(refreshTime);
+                }
+                if (monitor != null) monitor.label1.Text = "";
             }
+            catch (Exception) { if (monitor != null) monitor.label1.Text = ""; }
+        }
+        public override void HandleClick(string button)
+        {
+            base.HandleClick(button);
+            if (button == "Add new preview")
+            {
+                    AddNewPreview(IoT.GetInputString("Name"));
+            }
+            else if (button == "Remove preview")
+            {
+                RemovePreview(IoT.GetInputString("Name"));
+            }
+            else if (button == "Refresh")
+            {
+                Action();
+                IoT.ShowMessage("Refresh sent");
+            }
+        }
+        protected override void StartTasks()
+        {
+            tasks.Add(new Thread(TimeTask1));
+            tasks[tasks.Count - 1].Start();
         }
     }
     class TempMeter : Receiver
@@ -129,27 +177,30 @@ namespace Equipments
         static private String defalutName = "TempMeter";
         private float temp = 18.0f;
         public int refreshTime;
-        public TempMeter(int _refreshTime) : this(defalutName, _refreshTime) { }
-        public TempMeter(String name) : this(name, defalutRefreshTime) { }
-        public TempMeter() : this(defalutName) { }
-        public TempMeter(String name, int _refreshTime)
+        public TempMeter(int _refreshTime) : this(defalutName, _refreshTime)
         {
-            Name = name;
+            Name += id;
+        }
+        public TempMeter(String name) : this(name, defalutRefreshTime)
+        {
+            Name += id.ToString();
+        }
+        public TempMeter() : this(defalutName) { }
+        public TempMeter(String name, int _refreshTime) : base(name)
+        {
             refreshTime = _refreshTime;
             tasks = new List<Thread>();
-            tasks.Add(new Thread(TimeTask1));
-            tasks[0].Start();
         }
         protected override String HandleFollowSpecial(int order, String argv)
         {
             if (order == 1)
-                return temp.ToString();
+                return Math.Round(temp,2).ToString();
             else
             {
-                while (temp > float.Parse(argv) && listenFlag)
+                while (temp < float.Parse(argv) && listenFlag)
                 {
-                    temp += 0.4f;
-                    Thread.Sleep(refreshTime);
+                    temp += 0.1f;
+                    Thread.Sleep(refreshTime/4);
                 }
                 return GlobalVarEquipments.Done;
             }
@@ -161,12 +212,28 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            IMGstate = true;
+            try
             {
-                if (temp>0.0f)
-                    temp -= 0.1f;
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    if (temp > 0.0f)
+                        temp -= 0.1f;
+                    Thread.Sleep(refreshTime);
+                }
             }
+            catch (Exception){}
+            finally{IMGstate = false;}
+        }
+        public override void HandleClick(string button)
+        {
+            base.HandleClick(button);
+        }
+
+        protected override void StartTasks()
+        {
+            tasks.Add(new Thread(TimeTask1));
+            tasks[tasks.Count-1].Start();
         }
     }
     class Radiator : Receiver
@@ -174,21 +241,17 @@ namespace Equipments
         // ORDERS:
         //1- is my temp ok
         //2-start heating
-        static private int defalutRefreshTime = 1000;
+        static private int defalutRefreshTime = 500;
         static private String defalutName = "Radiator";
         static private float defalutTempTarget = 20.0f;
         private float tempTarget= defalutTempTarget;
         static private String defalutMyTempMeter = "TempMeter";
         private String myTempMeter = defalutMyTempMeter;
         private bool iSmyTempMeterOk=true;
-        public int refreshTime;
-        public Radiator(int _refreshTime) : this(defalutName, _refreshTime) { }
-        public Radiator(String name) : this(name, defalutRefreshTime) { }
-        public Radiator() : this(defalutName) { }
-        public Radiator(String name, int _refreshTime)
+        public Radiator() : this(defalutName){Name += id;}
+        public Radiator(String name) : base(name)
         {
             Name = name;
-            refreshTime = _refreshTime;
         }
         public void setTempTarget(float temp)
         {
@@ -228,12 +291,15 @@ namespace Equipments
                     if (iSmyTempMeterOk != false)
                     {
                         iSmyTempMeterOk = false;
+                        IMGstate = true;
+                        makeLogs("Heating started");
                         AddMessageFollow(2, tempTarget.ToString(), myTempMeter); // send message to warm
                     }
                     while (!iSmyTempMeterOk && listenFlag) // check if temperature is stil NOK
-                        Thread.Sleep(refreshTime);
+                        Thread.Sleep(100);
                 }
                 catch (Exception){}
+                finally {IMGstate = false;}
                 return GlobalVarEquipments.Done;
             }
         }
@@ -241,11 +307,52 @@ namespace Equipments
         {
             if (answer == "ERROR")
             {
-                makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
+                makeLogs("Cooperating devices "+name+" not connected"); // incorrect message or user is not connected
+                makeLogs("Heating ended");
                 iSmyTempMeterOk = true;
+                return;
             }
             if (name == myTempMeter && answer == GlobalVarEquipments.Done)
+            {
                 iSmyTempMeterOk = true; // if get answer that temp is now ok
+                makeLogs("Heating ended");
+            }
+        }
+        public override void HandleClick(string button)
+        {
+            base.HandleClick(button);
+            if (button == "Set temp sensor")
+            {
+                String _name = IoT.GetInputString("Name");
+                if (_name == "")
+                    setTempMeter();
+                else
+                    setTempMeter(_name);
+                IoT.ShowMessage("Temp sensor name is " + myTempMeter);
+            }
+            else if (button == "Set expected temp")
+            {
+                float teMp= IoT.GetInputFloat("Expected temp", defalutTempTarget);
+                    setTempTarget(teMp);
+                IoT.ShowMessage("Expected temp is " + tempTarget);
+            }
+            else if (button == "Heat")
+            {
+                if (state == Air.State.CONNECTED)
+                {
+                    if (iSmyTempMeterOk)
+                    {
+                        Action();
+                    }
+                    else
+                        IoT.ShowMessage("Already heating");
+                }
+                else
+                    IoT.ShowMessage("Radiator not connected");
+            }
+        }
+        protected override void StartTasks()
+        {
         }
     }
     class TempRegulator : Receiver
@@ -261,16 +368,17 @@ namespace Equipments
         private String myRadiator = defalutMyRadiator;
         private bool isRadiatorWorking=false;
         public int refreshTime;
-        public TempRegulator(int _refreshTime) : this(defalutName, _refreshTime) { }
+        public TempRegulator(int _refreshTime) : this(defalutName, _refreshTime)
+        {
+            Name += id;
+        }
         public TempRegulator(String name) : this(name, defalutRefreshTime) { }
         public TempRegulator() : this(defalutName) { }
-        public TempRegulator(String name, int _refreshTime)
+        public TempRegulator(String name, int _refreshTime) : base(name)
         {
             Name = name;
             refreshTime = _refreshTime;
             tasks = new List<Thread>();
-            tasks.Add(new Thread(TimeTask1));
-            tasks[0].Start();
         }
         public void setTempMeter(String name)
         {
@@ -298,9 +406,9 @@ namespace Equipments
         {
             if (order == 1)
                 if (isRadiatorWorking)
-                    return myRadiator + " is warming " + myTempMeter;
+                    return myRadiator + " is warming for " + myTempMeter;
                 else
-                    return myRadiator + " is not warming " + myTempMeter;
+                    return myRadiator + " is not warming for " + myTempMeter;
             else
             {
                 isRadiatorWorking = true;
@@ -318,6 +426,7 @@ namespace Equipments
             {
                 makeLogs("Cooperating devices not connected"); // incorrect message or user is not connected
                 isRadiatorWorking = false;
+                return;
             }
             if (name==myTempMeter)
                 AddMessageFollow(2, answer, myRadiator);
@@ -327,11 +436,55 @@ namespace Equipments
         // tasks running on timer
         private void TimeTask1()
         {
-            while (listenFlag)
+            try
             {
-                AddMessageFollow(1, "", myTempMeter);
-                Thread.Sleep(refreshTime);
+                while (listenFlag)
+                {
+                    AddMessageFollow(1, "", myTempMeter);
+                    Thread.Sleep(refreshTime);
+                }
             }
+            catch (Exception e) { }
+        }
+        public override void HandleClick(string button)
+        {
+            base.HandleClick(button);
+            if (button == "Attach" && IMGstate==false)
+                IMGstate = true;
+            else if (button == "Set temp sensor")
+            {
+                String _name = IoT.GetInputString("Name");
+                if (_name == "")
+                    setTempMeter();
+                else
+                    setTempMeter(_name);
+                IoT.ShowMessage("Temp sensor name is " + myTempMeter);
+            }
+            else if (button == "Set radiator")
+            {
+                String _name = IoT.GetInputString("Name");
+                if (_name == "")
+                    setMyRadiator();
+                else
+                    setMyRadiator(_name);
+                IoT.ShowMessage("Radiator name is " + myRadiator);
+            }
+            else if (button == "Refresh")
+            {
+                if(state==Air.State.CONNECTED)
+                { 
+                    Action();
+                    IoT.ShowMessage("Temperatur will be check");
+                }
+                else
+                    IoT.ShowMessage("Regulator not connected");
+        }
+
+        }
+        protected override void StartTasks()
+        {
+            tasks.Add(new Thread(TimeTask1));
+            tasks[tasks.Count - 1].Start();
         }
     }
 }
