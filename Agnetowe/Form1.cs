@@ -268,9 +268,13 @@ namespace Agnetowe
                 return;
             e.Item.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(32)))),
                  ((int)(((byte)(32)))));
-            if (e.Item.Text=="Turn Off")
+            if (e.Item.Text == "Turn Off")
             {
-                TurnOffDevice();
+                try
+                {
+                    TurnOffDevice();
+                }catch (Exception){}
+                return;
             }
             device.HandleClick(e.Item.Text);
         }
